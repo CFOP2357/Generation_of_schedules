@@ -6,6 +6,11 @@ from matplotlib.style import available
 from numpy import full
 from sqlalchemy import false, true
 
+"""
+    Notas
+
+    Falta agregar los slots del horario de estudiante 
+"""
 
 class Group:
     def __init__(self, id_subject, group, teacher, available_spaces,  
@@ -142,6 +147,8 @@ class ScheduleManager:
         #self.subjects = []
         self.subjects = {}
         self.groups = []
+
+        #self.schedule =
 
 
         #def group_order_by_available_space():
