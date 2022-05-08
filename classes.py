@@ -1,4 +1,5 @@
 from dataclasses import asdict
+import numbers
 from os import major
 from sys import flags
 from tokenize import group
@@ -70,7 +71,7 @@ class Subject:
     def get_all_groups(self):
         return self.groups
 
-    #This function will return a specific group given an id
+    #This function will return a specific group given an id     ########################  Not necesary ####################
     def get_group(self, id_group):
         return self.groups[id_group]
 
@@ -84,12 +85,8 @@ class Subject:
         
         return not_full_groups
 
-    #this funtion is used at the moment of binding data
-    def insert_group(self, new_group):
-        self.groups[new_group.group] = new_group
 
-
-    def compatible_group_with_more_space(self,student):
+    def get_compatible_group_with_more_space(self,student):
         more_space_group = None
 
         for group in self.groups.values():
@@ -98,7 +95,19 @@ class Subject:
 
         return more_space_group
 
-    def group_earliest_hour(group):
+    
+
+    def get_earliest_compatible_group(self,student):
+        earliest_group = None
+        earliest_hour = 30
+        for group in self.groups.values():
+            if group.available_space > 0 and self.get_group_earliest_hour(group)<earliest_hour and not student.is_busy(group):
+                earliest_hour = self.get_group_earliest_hour(group)
+                earliest_group = group
+
+        return earliest_group
+
+    def get_group_earliest_hour(group):
         earliest_hour = 500000
 
         if(group.monday_start != 0):
@@ -119,18 +128,15 @@ class Subject:
             earliest_hour = group.saturday_start
 
         return earliest_hour
-
-    def earliest_compatible_group(self,student):
-        earliest_group = None
-        earliest_hour = 30
-        for group in self.groups.values():
-            if group.available_space > 0 and self.group_earliest_hour(group)<earliest_hour and not student.is_busy(group):
-                earliest_hour = self.group_earliest_hour(group)
-                earliest_group = group
-
-        return earliest_group
-
         
+
+    #this funtion is used at the moment of binding data
+    def insert_group(self, new_group):
+        self.groups[new_group.group] = new_group
+
+
+
+
 
 
 class Major:
@@ -139,12 +145,19 @@ class Major:
         self.name = name
         self.subjects = {}
 
+    #####################################################
+    #########          Access methods        ############
+    #####################################################
     def count_subjects(self):
         return len(self.subjects)
     
+
     def get_subjects(self):
         return self.subjects
 
+    #####################################################
+    #########      Modification methods      ############
+    #####################################################
     def insert_subject(self, new_subject):
         self.subjects[new_subject.id_subject] = new_subject
 
@@ -162,28 +175,16 @@ class Student:
         self.suscribed_groups = {}
         self.schedule = np.zeros((14,6))
 
-        
-    def enrolled_subjects(self):
+    #####################################################
+    #########          Access methods        ############
+    #####################################################
+    def get_enrolled_subjects(self):
         return self.suscribed_groups
 
     def get_major_subjects(self):
         major_subjects = self.major.get_subjects()
         return major_subjects
 
-    def unsuscribe_subjects_group(self, id_subject):
-        self.suscribed_groups[id_subject].unsuscribe_student()
-        self.suscribed_groups.pop(id_subject)
-        ################################################ void the schedule
-
-    def is_slot_busy(self, startTime,endTime,day):
-        flag = False
-        #If the student is busy at some hour between the range of hours for the group
-        for i in range(startTime-7,endTime-7):
-            if(self.schedule[i,day]==1):
-                flag=True
-            break
-
-        return flag
 
     #This function checks if the student is busy given the slots of hours of any group
     def is_busy(self,group):
@@ -199,21 +200,58 @@ class Student:
 
         return flag
 
+    #This functions checks if the student is busy given a group range of hours and a specific day
+    def is_slot_busy(self, startTime,endTime,day_index):
+        flag = False
+        #If the student is busy at some hour between the range of hours for the group
+        for i in range(startTime-7,endTime-7):
+            if(self.schedule[i,day_index]==1):
+                flag=True
+            break
+
+        return flag
     
-   
-
-
-        
-
-    #def suscribe_subjects_group(id_subject, id_group):
-    def suscribe_subjects_group(self, group):
+    #####################################################
+    #########      Modification methods      ############
+    #####################################################
+    def suscribe_subject_group(self, group):
         self.suscribed_groups[group.id_subject] = group
+        self.fill_schedule(group, True)
+
+
+    def unsuscribe_subject_group(self, id_subject):
+        self.suscribed_groups[id_subject].unsuscribe_student()
+        self.suscribed_groups.pop(id_subject)
+        self.fill_schedule(group, False)
+
+
+    def fill_schedule(self, group,suscribe_bool):
+        if(suscribe_bool):
+            number = 1
+        else:
+            number = 0
+
+        if(group.monday_start != 0):
+            self.fill_day(number,group.monday_start,group.monday_end,0)
+        if(group.tuesday_start != 0):
+            self.fill_day(number,group.tuesday_start,group.tuesday_end,1)
+        if(group.wednesday_start != 0):
+            self.fill_day(number,group.wednesday_start,group.wednesday_end,2)
+        if(group.thursday_start != 0):
+            self.fill_day(number,group.thursday_start,group.thursday_end,3)
+        if(group.friday_start != 0):
+            self.fill_day(number,group.friday_start,group.friday_end,4)
+        if(group.saturday_start != 0):
+            self.fill_day(number,group.saturday_start,group.saturday_end,5)
+
+
+    def fill_day(self, number, startTime, endTime,day_index):
+        for i in range(startTime-7, endTime-7):
+            self.schedule[i,day_index]=number
     
-    #def delete_shedule(id_subject, id_group):   
 
     def insert_major(self, major):
         self.major = major
-
 
 
 
