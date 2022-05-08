@@ -1,10 +1,14 @@
+from dataclasses import asdict
 from os import major
+from sys import flags
 from tokenize import group
 
 from matplotlib.pyplot import get
 from matplotlib.style import available
 from numpy import full
 from sqlalchemy import false, true
+
+import numpy as np
 
 """
     Notas
@@ -85,6 +89,48 @@ class Subject:
         self.groups[new_group.group] = new_group
 
 
+    def compatible_group_with_more_space(self,student):
+        more_space_group = None
+
+        for group in self.groups.values():
+            if(group.available_spaces > more_space_group.available_spaces and not student.is_busy(group)):
+                more_space_group = group
+
+        return more_space_group
+
+    def group_earliest_hour(group):
+        earliest_hour = 500000
+
+        if(group.monday_start != 0):
+            earliest_hour = group.monday_start
+        if(group.tuesday_start != 0 and group.tuesday_start < earliest_hour):
+            earliest_hour = group.tuesday_start
+
+        if(group.wednesday_start != 0 and group.wednesday_start < earliest_hour):
+            earliest_hour = group.wednesday_start
+
+        if(group.thursday_start != 0 and group.thursday_start < earliest_hour):
+            earliest_hour = group.thursday_start
+
+        if(group.friday_start != 0 and group.friday_start < earliest_hour):
+            earliest_hour = group.friday_start
+                       
+        if(group.saturday_start != 0 and group.saturday_start < earliest_hour):
+            earliest_hour = group.saturday_start
+
+        return earliest_hour
+
+    def earliest_compatible_group(self,student):
+        earliest_group = None
+        earliest_hour = 30
+        for group in self.groups.values():
+            if group.available_space > 0 and self.group_earliest_hour(group)<earliest_hour and not student.is_busy(group):
+                earliest_hour = self.group_earliest_hour(group)
+                earliest_group = group
+
+        return earliest_group
+
+        
 
 
 class Major:
@@ -101,6 +147,8 @@ class Major:
 
     def insert_subject(self, new_subject):
         self.subjects[new_subject.id_subject] = new_subject
+
+    
     
 
 
@@ -111,23 +159,55 @@ class Student:
         self.id_major = id_major
         self.major 
         #The schedule is a dictionary of groups, the key will be the id of the subject
-        self.schedule = {}
+        self.suscribed_groups = {}
+        self.schedule = np.zeros((14,6))
+
         
     def enrolled_subjects(self):
-        return self.schedule
+        return self.suscribed_groups
 
     def get_major_subjects(self):
         major_subjects = self.major.get_subjects()
         return major_subjects
 
     def unsuscribe_subjects_group(self, id_subject):
-        self.schedule[id_subject].unsuscribe_student()
-        self.schedule.pop(id_subject)
+        self.suscribed_groups[id_subject].unsuscribe_student()
+        self.suscribed_groups.pop(id_subject)
+        ################################################ void the schedule
+
+    def is_slot_busy(self, startTime,endTime,day):
+        flag = False
+        #If the student is busy at some hour between the range of hours for the group
+        for i in range(startTime-7,endTime-7):
+            if(self.schedule[i,day]==1):
+                flag=True
+            break
+
+        return flag
+
+    #This function checks if the student is busy given the slots of hours of any group
+    def is_busy(self,group):
+        flag = True
+        #If the student is not busy all days then its true that he es not busy
+        if  (not self.is_slot_busy(group.monday_start,group.monday_end,0)
+        and not self.is_slot_busy(group.tuesday_start,group.tuesday_end,1)
+        and not self.is_slot_busy(group.wednesday_start,group.wednesday_end,2)
+        and not self.is_slot_busy(group.thursday_start,group.thursday_end,3)
+        and not self.is_slot_busy(group.friday_start,group.friday_end,4)
+        and not self.is_slot_busy(group.saturday_start,group.saturday_end,5)):
+            flag = False
+
+        return flag
+
+    
+   
+
+
         
 
     #def suscribe_subjects_group(id_subject, id_group):
     def suscribe_subjects_group(self, group):
-        self.schedule[group.id_subject] = group
+        self.suscribed_groups[group.id_subject] = group
     
     #def delete_shedule(id_subject, id_group):   
 
@@ -192,4 +272,7 @@ class ScheduleManager:
     #def get_list():
     #def delete_subject():
     #def insert_subject():
+
+
+    
 
