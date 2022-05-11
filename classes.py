@@ -187,27 +187,27 @@ class Student:
 
 
     #This function checks if the student is busy given the slots of hours of any group
-    def is_busy(self,group):
-        flag = True
+    def is_group_compatible(self,group):
+        flag = False
         #If the student is not busy all days then its true that he es not busy
-        if  (not self.is_slot_busy(group.monday_start,group.monday_end,0)
-        and not self.is_slot_busy(group.tuesday_start,group.tuesday_end,1)
-        and not self.is_slot_busy(group.wednesday_start,group.wednesday_end,2)
-        and not self.is_slot_busy(group.thursday_start,group.thursday_end,3)
-        and not self.is_slot_busy(group.friday_start,group.friday_end,4)
-        and not self.is_slot_busy(group.saturday_start,group.saturday_end,5)):
-            flag = False
+        if  (self.is_slot_compatible(group.monday_start,group.monday_end,0)
+        and self.is_slot_compatible(group.tuesday_start,group.tuesday_end,1)
+        and self.is_slot_compatible(group.wednesday_start,group.wednesday_end,2)
+        and self.is_slot_compatible(group.thursday_start,group.thursday_end,3)
+        and self.is_slot_compatible(group.friday_start,group.friday_end,4)
+        and self.is_slot_compatible(group.saturday_start,group.saturday_end,5)):
+            flag = True
 
         return flag
 
     #This functions checks if the student is busy given a group range of hours and a specific day
-    def is_slot_busy(self, startTime,endTime,day_index):
-        flag = False
+    def is_slot_compatible(self, startTime,endTime,day_index):
+        flag = True
         #If the student is busy at some hour between the range of hours for the group
         for i in range(startTime-7,endTime-7):
             if(self.schedule[i,day_index]==1):
-                flag=True
-            break
+                flag=False
+                break
 
         return flag
     
