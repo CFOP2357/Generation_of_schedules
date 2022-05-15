@@ -1,11 +1,11 @@
 from tkinter import * 
 from tkinter.ttk import Progressbar
 from tkinter import filedialog
+from typing_extensions import Self
 from PIL import ImageTk,Image
 import threading
 import file_manager as f_m
-import data_processing as p
-import algorithm as al
+import schedule_generator as s_g
 
 def ask_filename_csv(root: Tk):
 	filename = filedialog.askopenfilename(title="Selecciona un archivo", 
@@ -128,25 +128,29 @@ class UI(object):
 			self.state +=1
 			if(self.state == 4):
 				self.button_gen_set()
-	    
-	def run_algorithm(self) -> None: 
+
+	def run_algorithm(self) -> None:
 		self.Label5['text'] = "generando horarios iniciales"
-		process = p.DataProcessing(self.df_students,self.df_majors,self.df_subjects,self.df_groups)
-		process.df_to_classes()
-		al.algorithm()
+		s_g.schedule_generator(f_m.instant_classes(self.df_students, self.df_groups, self.df_subjects, self.df_majors))
+		
 
-		# self.Label5['text'] = "calculando metricas"
+	    
+	# def run_algorithm(self) -> None: 
+	# 	self.Label5['text'] = "generando horarios iniciales"
+        
 
-		# self.Label_metricas['text'] = "horarios completos: " + str(optimizador.get_metricas())
+	# 	# self.Label5['text'] = "calculando metricas"
 
-		# self.progreso.set(100)
+	# 	# self.Label_metricas['text'] = "horarios completos: " + str(optimizador.get_metricas())
 
-		# self.Label5['text'] = "horario disponible"
-		# self.download_schedule_button["state"] = "normal"
-		# self.Label6['text'] = "Elige la carpeta para descargar los horarios"
+	# 	# self.progreso.set(100)
 
-		# self.generate_schedules_button['text'] = "Mejorar Horarios"
-		# self.generate_schedules_button['command'] = self.run_thread2
+	# 	# self.Label5['text'] = "horario disponible"
+	# 	# self.download_schedule_button["state"] = "normal"
+	# 	# self.Label6['text'] = "Elige la carpeta para descargar los horarios"
+
+	# 	# self.generate_schedules_button['text'] = "Mejorar Horarios"
+	# 	# self.generate_schedules_button['command'] = self.run_thread2
 
 
 	def run_thread(self):

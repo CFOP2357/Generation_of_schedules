@@ -1,6 +1,6 @@
+from sched import scheduler
 import pandas as pd
 import classes as cl
-
 
 def read_error_filter(path, name):
     df = pd.read_csv(path)
@@ -68,8 +68,31 @@ def instant_classes(df_students, df_groups, df_subjects, df_majors):
             df_groups["sabado_inicio"][i],
             df_groups["sabado_final"][i],
         )
-        schedule_manager.groups.append(group)
+        schedule_manager.insert_group(group)
 
+    for i in df_subjects.index:
+        subject = cl.Subject(
+            df_subjects["id_carrera"][i],
+            df_subjects["id_materia"][i],
+            df_subjects["nombre"][i]
+        )
+        schedule_manager.insert_subject(subject)
+
+    for i in df_majors.index: 
+        major = cl.Major(
+            df_majors["id_carrera"][i],
+            df_majors["nombre"][i]
+            )
+        schedule_manager.insert_major(major)
+
+    for i in df_students.index:
+        student = cl.Student(
+            df_students["cve_unica"][i],
+            df_students["id_carrera"][i]
+            )
+        schedule_manager.insert_student(student)
+
+    return schedule_manager
 
 
     

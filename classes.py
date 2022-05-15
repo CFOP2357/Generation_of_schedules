@@ -1,12 +1,12 @@
 from hashlib import new
 from dataclasses import asdict
 import numbers
-from os import major
+# from os import major
 from sys import flags
 from tokenize import group
 
-from matplotlib.pyplot import get
-from matplotlib.style import available
+# from matplotlib.pyplot import get
+# from matplotlib.style import available
 from numpy import full
 from sqlalchemy import false, true
 
@@ -91,7 +91,7 @@ class Subject:
         more_space_group = None
 
         for group in self.groups.values():
-            if(group.available_spaces > more_space_group.available_spaces and not student.is_busy(group)):
+            if(group.available_spaces > more_space_group.available_spaces and not student.is_group_compatible(group)):
                 more_space_group = group
 
         return more_space_group
@@ -102,7 +102,7 @@ class Subject:
         earliest_group = None
         earliest_hour = 30
         for group in self.groups.values():
-            if group.available_space > 0 and self.get_group_earliest_hour(group)<earliest_hour and not student.is_busy(group):
+            if group.available_spaces > 0 and self.get_group_earliest_hour(group)<earliest_hour and not student.is_group_compatible(group):
                 earliest_hour = self.get_group_earliest_hour(group)
                 earliest_group = group
 
@@ -171,7 +171,7 @@ class Student:
     def __init__(self, id_student, id_major):
         self.id_student = id_student
         self.id_major = id_major
-        self.major 
+        self.major = None
         #The schedule is a dictionary of groups, the key will be the id of the subject
         self.suscribed_groups = {}
         self.schedule = np.zeros((14,6))
@@ -185,7 +185,6 @@ class Student:
     def get_major_subjects(self):
         major_subjects = self.major.get_subjects()
         return major_subjects
-
 
     #This function checks if the student is busy given the slots of hours of any group
     def is_group_compatible(self,group):
@@ -217,12 +216,14 @@ class Student:
     #####################################################
     def suscribe_subject_group(self, group):
         self.suscribed_groups[group.id_subject] = group
+        group.suscribe_student()
         self.fill_schedule(group, True)
 
 
     def unsuscribe_subject_group(self, id_subject):
         self.suscribed_groups[id_subject].unsuscribe_student()
         self.suscribed_groups.pop(id_subject)
+        group.unsuscribe_student()
         self.fill_schedule(group, False)
 
 
