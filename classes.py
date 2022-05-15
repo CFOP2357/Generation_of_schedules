@@ -287,18 +287,34 @@ class ScheduleManager:
     
 
     def bind_data(self):
-        #Binding all groups with their corresponding subject
+        """#Binding all groups with their corresponding subject
         for group in self.groups:
-            self.subjects[group.id_subject].insert_group(group)
-        
+            print(self.subjects[group.id_subject].name)#.insert_group(group)
+
         #Binding all subjects with their corresponding major
         for subject in self.subjects.values():
             self.majors[subject.id_major].insert_subject(subject)
 
         #Binding all students with their major
         for student in self.students:
-            student.major = self.majors[student.id_major]
-
+            student.major = self.majors[student.id_major]"""
+        print("\n n Materias:")
+        print(len(self.subjects.values()))
+        if(len(self.subjects.values())<233):
+            print("faltan materias, en total son 233")
+        print("\n n Grupos:")
+        print(len(self.groups))
+        if(len(self.groups)<650):
+            print("faltan grupos, en total son 650")
+        print("\n n Carreras:")
+        print(len(self.majors.values()))
+        if(len(self.majors.values())<34):
+            print("faltan carreras, en total son 34")
+        print("\n n Estudiantes:")
+        print(len(self.students))
+        if(len(self.students)<1140):
+            print("faltan grupos, en total son 1140")
+        exit()
     #def get_students_ids(self):
     
     def get_students(self):
