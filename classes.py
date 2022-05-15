@@ -1,3 +1,4 @@
+from hashlib import new
 from dataclasses import asdict
 import numbers
 from os import major
@@ -269,6 +270,20 @@ class ScheduleManager:
         #self.schedule =
 
         #def group_order_by_available_space():
+
+    def insert_student(self, new_student):
+        self.students.append(new_student) 
+
+    def insert_major(self, new_major):
+        self.majors[new_major.id_major] = new_major
+
+    def insert_subject(self, new_subject):
+        self.subjects[new_subject.id_subject] = new_subject
+
+    def insert_group(self, new_group):
+        self.groups.append(new_group)
+
+    
 
     def bind_data(self):
         #Binding all groups with their corresponding subject
