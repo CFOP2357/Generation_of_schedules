@@ -72,8 +72,8 @@ def instant_classes(df_students, df_groups, df_subjects, df_majors):
 
     for i in df_subjects.index:
         subject = cl.Subject(
-            df_subjects["id_carrera"][i],
             df_subjects["id_materia"][i],
+            df_subjects["id_carrera"][i],
             df_subjects["nombre"][i]
         )
         schedule_manager.insert_subject(subject)
