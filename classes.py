@@ -268,7 +268,6 @@ class ScheduleManager:
 
         #self.schedule =
 
-
         #def group_order_by_available_space():
 
     def bind_data(self):
