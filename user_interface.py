@@ -23,15 +23,12 @@ class UI(object):
 		self.root = Tk()
 		self.root.title("Generación de Horarios")
         
-		self.progreso = DoubleVar()#variable que monitoreara la barra de progreso
-		# numero = f_m.Numero_Alumnos()
-		# for num in numero:
-		# 	numero = num[0]
+		self.progreso = DoubleVar()
+		
 		self.pbr_tarea = Progressbar(self.root, length=250, style='black.Horizontal.TProgressbar', variable=self.progreso, maximum=100)#aqui se agrega la variable que le da el aumento a la barra en la seccion de variable
 		self.pbr_tarea['value'] = 0 #valor de inicio de barrra de progreso tambien se agrega el limite a la barra con maximum=#
 		self.state = 0
 
-		#Rutas de los archivos
 		self.estudiantes_filename = ''
 		self.grupos_filename = ''
 		self.carreras_filename=''
@@ -40,9 +37,6 @@ class UI(object):
 		self.root.iconbitmap('icono.ico')
 		self.root.config(bg="#E9E9F1")
 		self.headerImg = ImageTk.PhotoImage(Image.open('UASLP.PNG'))
-		#self.root.iconbitmap(r'G:/Mi unidad/GenerationofSchedules/Generation-of-schedules/src/icono.ico')
-		#self.root.config(bg="#E9E9F1")
-		#self.headerImg = ImageTk.PhotoImage(Image.open(r'G:/Mi unidad/GenerationofSchedules/Generation-of-schedules/src/UASLP.PNG'))
 		self.headerLabel = Label(self.root, image=self.headerImg)
 
 		self.Label1 = Label(self.root, text="No cargado", bg="#E9E9F1")
@@ -73,10 +67,11 @@ class UI(object):
 		self.build_ui()
     
 	
-	def select_folder(root: Tk):
+	def select_folder(self) -> None:
 		path = filedialog.askdirectory()
-		print (path)
-		# f_m.Crea_csv_horario(path)
+		if path:
+			f_m.class_to_excel(self.schedules.students,path)
+			self.Label6['text'] = "El archivo se guardó correctamente"
 
 
 	def run(self) -> None:
@@ -131,57 +126,18 @@ class UI(object):
 
 	def run_algorithm(self) -> None:
 		self.Label5['text'] = "generando horarios iniciales"
-		s_g.schedule_generator(f_m.instant_classes(self.df_students, self.df_groups, self.df_subjects, self.df_majors))
-		
+		self.schedules = s_g.schedule_generator(f_m.instant_classes(self), self)
+		self.progreso.set(100)
 
-	    
-	# def run_algorithm(self) -> None: 
-	# 	self.Label5['text'] = "generando horarios iniciales"
-        
+		self.Label5['text'] = "horario disponible"
+		self.download_schedule_button["state"] = "normal"
+		self.Label6['text'] = "Elige la carpeta para descargar los horarios"
 
-	# 	# self.Label5['text'] = "calculando metricas"
-
-	# 	# self.Label_metricas['text'] = "horarios completos: " + str(optimizador.get_metricas())
-
-	# 	# self.progreso.set(100)
-
-	# 	# self.Label5['text'] = "horario disponible"
-	# 	# self.download_schedule_button["state"] = "normal"
-	# 	# self.Label6['text'] = "Elige la carpeta para descargar los horarios"
-
-	# 	# self.generate_schedules_button['text'] = "Mejorar Horarios"
-	# 	# self.generate_schedules_button['command'] = self.run_thread2
 
 
 	def run_thread(self):
 		t1 = threading.Thread(target=self.run_algorithm)
 		t1.start()	
-
-	# def run_algorithm2(self) -> None: 
-	# 	self.progreso.set(0)
-
-	# 	self.download_schedule_button["state"] = "disabled"
-	# 	self.Label5['text'] = "mejorando horario"
-	# 	self.Label6['text'] = "Podrás descargar hasta que terminen los horarios"
-		
-	# 	ans = optimizador.enfriamiento_simulado(self)
-
-	# 	self.Label5['text'] = "calculando metricas"
-	# 	self.Label_metricas['text'] = "horarios completos: " + str(ans)
-
-	# 	self.Label5['text'] = "horario disponible"
-	# 	self.download_schedule_button["state"] = "normal"
-	# 	self.Label6['text'] = "Elige la carpeta para descargar los horarios"
-
-	# 	self.progreso.set(100)
-
-	# 	self.generate_schedules_button['text'] = "Mejorar Horarios"
-	# 	self.generate_schedules_button['command'] = self.run_thread2
-
-	# def run_thread2(self):
-	# 	t2 = threading.Thread(target=self.run_algorithm2)
-	# 	t2.start()		
-
 
 
 	def build_ui(self) -> None:

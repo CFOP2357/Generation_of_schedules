@@ -103,14 +103,14 @@ class Subject:
         earliest_group = None
         earliest_hour = 30
         for group in self.groups.values():
-            if group.available_spaces > 0 and self.get_group_earliest_hour(group) < earliest_hour and not student.is_group_compatible(group):
+            if group.available_spaces > 0 and self.get_group_earliest_hour(group) < earliest_hour and student.is_group_compatible(group):
                 earliest_hour = self.get_group_earliest_hour(group)
                 earliest_group = group
 
         return earliest_group
 
     def get_group_earliest_hour(self, group):
-        earliest_hour = 500000
+        earliest_hour = 500
 
         if(group.monday_start != 0):
             earliest_hour = group.monday_start
