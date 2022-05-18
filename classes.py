@@ -9,7 +9,7 @@ from tokenize import group
 # from matplotlib.style import available
 from numpy import full
 from sqlalchemy import false, true
-
+from datetime import datetime
 import numpy as np
 
 """
@@ -259,6 +259,16 @@ class Student:
         self.major = major
 
 
+class Report:
+    def __init__(self, id_report, id_subject, id_group, id_student):
+        self.id_report = id_report
+        self.id_subject = id_subject
+        self.id_group = id_group
+        self.id_student = id_student
+        date = datetime.now()
+        self.date = str(date.strftime("%m-%d-%Y"))
+        self.time = str(date.strftime("%H:%M:%S"))
+
 
 
 class ScheduleManager:
@@ -267,10 +277,8 @@ class ScheduleManager:
         self.majors = {}
         self.subjects = {}
         self.groups = []
+        self.reports = []
 
-        #self.schedule =
-
-        #def group_order_by_available_space():
 
     def insert_student(self, new_student):
         self.students.append(new_student) 
@@ -286,7 +294,9 @@ class ScheduleManager:
 
     def insert_group(self, new_group):
         self.groups.append(new_group)
-
+    
+    def insert_report(self, new_report):
+        self.reports.append(new_report)
     
 
     def bind_data(self):
