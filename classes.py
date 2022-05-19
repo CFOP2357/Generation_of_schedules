@@ -260,14 +260,19 @@ class Student:
 
 
 class Report:
-    def __init__(self, id_report, id_subject, id_group, id_student):
+    def __init__(self, id_report, id_subject, id_student, comment):
         self.id_report = id_report
         self.id_subject = id_subject
-        self.id_group = id_group
         self.id_student = id_student
+        self.comment = comment
         date = datetime.now()
         self.date = str(date.strftime("%m-%d-%Y"))
         self.time = str(date.strftime("%H:%M:%S"))
+
+    def get_string(self):
+        report_text = str(self.id_report) + ',' + str(self.id_subject) + ',' + str(self.id_student)\
+            + str(self.date) + ',' + str(self.time) + ',' + str(self.comment) 
+        return report_text
 
 
 
