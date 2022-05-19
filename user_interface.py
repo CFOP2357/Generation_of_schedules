@@ -71,6 +71,7 @@ class UI(object):
 		path = filedialog.askdirectory()
 		if path:
 			f_m.class_to_excel(self.schedules.students,path)
+			f_m.reports_list_to_excel(self.schedules.reports,path)
 			self.Label6['text'] = "El archivo se guardó correctamente"
 
 
