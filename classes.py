@@ -1,15 +1,15 @@
 from hashlib import new
 from dataclasses import asdict
 import numbers
-from os import major
+# from os import major
 from sys import flags
 from tokenize import group
 
-from matplotlib.pyplot import get
-from matplotlib.style import available
+# from matplotlib.pyplot import get
+# from matplotlib.style import available
 from numpy import full
 from sqlalchemy import false, true
-
+from datetime import datetime
 import numpy as np
 
 """
@@ -19,13 +19,13 @@ import numpy as np
 """
 
 class Group:
-    def __init__(self, id_subject, group, teacher, available_spaces,  
+    def __init__(self, id_subject, id_group, teacher, available_spaces,  
                 monday_start, monday_end, tuesday_start, tuesday_end, 
                 wednesday_start, wednesday_end, thursday_start, thursday_end, 
                 friday_start, friday_end, saturday_start, saturday_end):
 
         self.id_subject = id_subject
-        self.group = group
+        self.id_group = id_group
         self.teacher = teacher
         self.available_spaces = available_spaces
         self.monday_start = monday_start
@@ -40,6 +40,7 @@ class Group:
         self.friday_end = friday_end
         self.saturday_start = saturday_start
         self.saturday_end = saturday_end
+
 
     def is_not_full(self):
         if(self.available_spaces>0):
@@ -62,19 +63,20 @@ class Subject:
         #Id for each instance
         self.id_subject = id_subject
         #Id for the major it belongs to
-        self.id_major = id_major
+        self.id_majors = [id_major,]
         #Name of the subject
         self.name = name
         #The groups collection will be made with a dictionary
         self.groups = {}
-        
+
+
     #This function will return all the groups for the subject
     def get_all_groups(self):
         return self.groups
 
     #This function will return a specific group given an id     ########################  Not necesary ####################
     def get_group(self, id_group):
-        return self.groups[id_group]
+        return self.groups[self.id_subject+id_group]
 
     #This function will return all the groups that have at least 1 space available
     def get_not_full_grups(self):
@@ -88,10 +90,9 @@ class Subject:
 
 
     def get_compatible_group_with_more_space(self,student):
-        more_space_group = None
-
+        more_space_group = list(self.groups.values())[0]
         for group in self.groups.values():
-            if(group.available_spaces > more_space_group.available_spaces and not student.is_busy(group)):
+            if(group.available_spaces > more_space_group.available_spaces and not student.is_group_compatible(group)):
                 more_space_group = group
 
         return more_space_group
@@ -102,14 +103,14 @@ class Subject:
         earliest_group = None
         earliest_hour = 30
         for group in self.groups.values():
-            if group.available_space > 0 and self.get_group_earliest_hour(group)<earliest_hour and not student.is_busy(group):
+            if group.available_spaces > 0 and self.get_group_earliest_hour(group) < earliest_hour and student.is_group_compatible(group):
                 earliest_hour = self.get_group_earliest_hour(group)
                 earliest_group = group
 
         return earliest_group
 
-    def get_group_earliest_hour(group):
-        earliest_hour = 500000
+    def get_group_earliest_hour(self, group):
+        earliest_hour = 500
 
         if(group.monday_start != 0):
             earliest_hour = group.monday_start
@@ -133,8 +134,10 @@ class Subject:
 
     #this funtion is used at the moment of binding data
     def insert_group(self, new_group):
-        self.groups[new_group.group] = new_group
+        self.groups[new_group.id_group] = new_group
 
+    def add_major(self,id_major):
+        self.id_majors.append(id_major)
 
 
 
@@ -171,7 +174,7 @@ class Student:
     def __init__(self, id_student, id_major):
         self.id_student = id_student
         self.id_major = id_major
-        self.major 
+        self.major = None
         #The schedule is a dictionary of groups, the key will be the id of the subject
         self.suscribed_groups = {}
         self.schedule = np.zeros((14,6))
@@ -185,7 +188,6 @@ class Student:
     def get_major_subjects(self):
         major_subjects = self.major.get_subjects()
         return major_subjects
-
 
     #This function checks if the student is busy given the slots of hours of any group
     def is_group_compatible(self,group):
@@ -217,12 +219,14 @@ class Student:
     #####################################################
     def suscribe_subject_group(self, group):
         self.suscribed_groups[group.id_subject] = group
+        group.suscribe_student()
         self.fill_schedule(group, True)
 
 
     def unsuscribe_subject_group(self, id_subject):
         self.suscribed_groups[id_subject].unsuscribe_student()
         self.suscribed_groups.pop(id_subject)
+        group.unsuscribe_student()
         self.fill_schedule(group, False)
 
 
@@ -255,22 +259,26 @@ class Student:
         self.major = major
 
 
+class Report:
+    def __init__(self, id_report, id_subject, id_group, id_student):
+        self.id_report = id_report
+        self.id_subject = id_subject
+        self.id_group = id_group
+        self.id_student = id_student
+        date = datetime.now()
+        self.date = str(date.strftime("%m-%d-%Y"))
+        self.time = str(date.strftime("%H:%M:%S"))
+
 
 
 class ScheduleManager:
     def __init__(self):
         self.students = []
-        #self.students = {}
-        #self.majors = []
         self.majors = {}
-        #self.subjects = []
         self.subjects = {}
         self.groups = []
+        self.reports = []
 
-        #self.schedule =
-
-
-        #def group_order_by_available_space():
 
     def insert_student(self, new_student):
         self.students.append(new_student) 
@@ -279,27 +287,33 @@ class ScheduleManager:
         self.majors[new_major.id_major] = new_major
 
     def insert_subject(self, new_subject):
-        self.subjects[new_subject.id_subject] = new_subject
+        if(self.exist_subject(new_subject.id_subject)):
+            self.subjects[new_subject.id_subject].add_major(new_subject.id_majors[0])
+        else:
+            self.subjects[new_subject.id_subject] = new_subject
 
     def insert_group(self, new_group):
         self.groups.append(new_group)
-
+    
+    def insert_report(self, new_report):
+        self.reports.append(new_report)
     
 
     def bind_data(self):
         #Binding all groups with their corresponding subject
         for group in self.groups:
             self.subjects[group.id_subject].insert_group(group)
-        
+
         #Binding all subjects with their corresponding major
         for subject in self.subjects.values():
-            self.majors[subject.id_major].insert_subject(subject)
+            for id_major in subject.id_majors:
+                self.majors[id_major].insert_subject(subject)
 
         #Binding all students with their major
         for student in self.students:
             student.major = self.majors[student.id_major]
 
-    #def get_students_ids(self):
+        #def get_students_ids(self):
     
     def get_students(self):
         return self.students
@@ -308,6 +322,8 @@ class ScheduleManager:
         count = len(self.students)
         return count
     
+    def exist_subject(self,id_subject):
+        return id_subject in self.subjects
     #def get_subjects_ids(self):
 
     def get_group(self, id_subject, id_group):
