@@ -46,7 +46,7 @@ class UI(object):
 		self.Label5 = Label(self.root, text="No terminado", bg="#E9E9F1")
 		self.Label_metricas = Label(self.root, text=" ", bg="#E9E9F1")
 		self.Label6 = Label(self.root, text="Podrás descargar hasta que terminen los horarios", bg="#E9E9F1")
-		self.label_general = Label(self.root, text="Favor de asignar todos los archivos para generar los horarios.",bg="#E9E9F1")
+		self.label_general = Label(self.root, text="Favor de cargar todos los archivos para generar los horarios.",bg="#E9E9F1")
 
 		self.label_Metrica = Label(self.root, text=" ",bg="#E9E9F1")
 		self.open_estudiantes_button = Button(self.root, text="Abrir CSV de Estudiantes", 
