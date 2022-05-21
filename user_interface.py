@@ -1,7 +1,6 @@
 from tkinter import * 
 from tkinter.ttk import Progressbar
 from tkinter import filedialog
-from typing_extensions import Self
 from PIL import ImageTk,Image
 import threading
 import file_manager as f_m
