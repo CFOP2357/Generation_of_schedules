@@ -2,7 +2,7 @@ from sched import scheduler
 import pandas as pd
 from datetime import datetime
 
-from classes import *
+from schedule_manager import *
 
 def read_error_filter(path, name):
     df = pd.read_csv(path)

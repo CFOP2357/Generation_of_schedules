@@ -1,6 +1,6 @@
 from calendar import calendar
 from email import generator
-from classes import *
+from schedule_manager import *
 
 # El metodo schedule_generator recibe 2 parametros:
 # 1. schedule_manger: es una instancia de la clase ScheduleManager la cual ya 
