@@ -40,7 +40,7 @@ def schedule_generator(schedule_manager, s):
     count = 0
     id_report = 0
     for student in schedule_manager.students:
-        progress = 95*count/total
+        progress = 95 * count / total
         s.progreso.set(progress)
         count += 1
         s.root.update_idletasks()

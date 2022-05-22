@@ -96,7 +96,7 @@ def instant_classes(s):
     return schedule_manager
 
 
-def class_to_excel(schedules,path):
+def class_to_excel(schedules, path):
     date = datetime.now()
     file = path + "/horariosUaslp-" + str(date.strftime("%m-%d-%Y-%H-%M-%S")) +  ".csv"
     csv = open(file,"w")
@@ -106,13 +106,13 @@ def class_to_excel(schedules,path):
             schedule = str(student.id_student) + "," + str(group.id_subject) + "," + str(group.id_group) + "\n"
             csv.write(schedule)
 
-def reports_list_to_excel(reports,path):
+def reports_list_to_excel(reports, path):
     date = datetime.now()
     file = path + "/ReportesHorarios-" + str(date.strftime("%m-%d-%Y-%H-%M-%S")) +  ".csv"
     csv = open(file,"w")
     csv.write("id_reporte,id_materia,id_usuario,fecha,hora,comentario\n")
     for report in reports:
-        csv.write(report.get_string()+"\n")
+        csv.write(report.get_string() + "\n")
 
 
 

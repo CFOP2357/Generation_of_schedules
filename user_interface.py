@@ -120,7 +120,7 @@ class UI(object):
 		self.df_subjects = r[1]
 		if(self.Label4['text'] == "El archivo de las materias fue cargado correctamente"):
 			self.open_materias_button["state"] = "disabled"
-			self.state +=1
+			self.state += 1
 			if(self.state == 4):
 				self.button_gen_set()
 

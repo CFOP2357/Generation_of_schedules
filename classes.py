@@ -43,7 +43,7 @@ class Group:
 
 
     def is_not_full(self):
-        if(self.available_spaces>0):
+        if(self.available_spaces > 0):
             return true
         else:
             return false
@@ -76,7 +76,7 @@ class Subject:
 
     #This function will return a specific group given an id     ########################  Not necesary ####################
     def get_group(self, id_group):
-        return self.groups[self.id_subject+id_group]
+        return self.groups[self.id_subject + id_group]
 
     #This function will return all the groups that have at least 1 space available
     def get_not_full_grups(self):
@@ -177,7 +177,7 @@ class Student:
         self.major = None
         #The schedule is a dictionary of groups, the key will be the id of the subject
         self.suscribed_groups = {}
-        self.schedule = np.zeros((14,6))
+        self.schedule = np.zeros((14, 6))
 
     #####################################################
     #########          Access methods        ############
@@ -193,12 +193,12 @@ class Student:
     def is_group_compatible(self,group):
         flag = False
         #If the student is not busy all days then its true that he es not busy
-        if  (self.is_slot_compatible(group.monday_start,group.monday_end,0)
-        and self.is_slot_compatible(group.tuesday_start,group.tuesday_end,1)
-        and self.is_slot_compatible(group.wednesday_start,group.wednesday_end,2)
-        and self.is_slot_compatible(group.thursday_start,group.thursday_end,3)
-        and self.is_slot_compatible(group.friday_start,group.friday_end,4)
-        and self.is_slot_compatible(group.saturday_start,group.saturday_end,5)):
+        if  (self.is_slot_compatible(group.monday_start,group.monday_end, 0)
+        and self.is_slot_compatible(group.tuesday_start,group.tuesday_end, 1)
+        and self.is_slot_compatible(group.wednesday_start,group.wednesday_end, 2)
+        and self.is_slot_compatible(group.thursday_start,group.thursday_end, 3)
+        and self.is_slot_compatible(group.friday_start,group.friday_end, 4)
+        and self.is_slot_compatible(group.saturday_start,group.saturday_end, 5)):
             flag = True
 
         return flag
@@ -207,9 +207,9 @@ class Student:
     def is_slot_compatible(self, startTime,endTime,day_index):
         flag = True
         #If the student is busy at some hour between the range of hours for the group
-        for i in range(startTime-7,endTime-7):
-            if(self.schedule[i,day_index]==1):
-                flag=False
+        for i in range(startTime-7, endTime-7):
+            if(self.schedule[i,day_index] == 1):
+                flag = False
                 break
 
         return flag
