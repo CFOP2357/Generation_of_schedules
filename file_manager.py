@@ -1,7 +1,8 @@
 from sched import scheduler
 import pandas as pd
-import classes as cl
 from datetime import datetime
+
+from classes import *
 
 def read_error_filter(path, name):
     df = pd.read_csv(path)
@@ -48,10 +49,10 @@ def kind_of_alert(id):
 
 def instant_classes(s):
     
-    schedule_manager = cl.ScheduleManager()
+    schedule_manager = ScheduleManager()
 
     for i in s.df_groups.index:
-        group = cl.Group(
+        group = Group(
             s.df_groups["id_materia"][i],
             s.df_groups["grupo"][i],
             s.df_groups["maestro"][i],
@@ -72,7 +73,7 @@ def instant_classes(s):
         schedule_manager.insert_group(group)
 
     for i in s.df_subjects.index:
-        subject = cl.Subject(
+        subject = Subject(
             s.df_subjects["id_materia"][i],
             s.df_subjects["id_carrera"][i],
             s.df_subjects["nombre"][i]
@@ -80,14 +81,14 @@ def instant_classes(s):
         schedule_manager.insert_subject(subject)
 
     for i in s.df_majors.index: 
-        major = cl.Major(
+        major = Major(
             s.df_majors["id_carrera"][i],
             s.df_majors["nombre"][i]
             )
         schedule_manager.insert_major(major)
 
     for i in s.df_students.index:
-        student = cl.Student(
+        student = Student(
             s.df_students["cve_unica"][i],
             s.df_students["id_carrera"][i]
             )

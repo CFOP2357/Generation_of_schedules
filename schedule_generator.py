@@ -1,7 +1,7 @@
 from calendar import calendar
 from email import generator
-import classes as cl
-#----------- Kevin aqui esta una breve explicacion -------------
+from classes import *
+
 # El metodo schedule_generator recibe 2 parametros:
 # 1. schedule_manger: es una instancia de la clase ScheduleManager la cual ya 
 # contiene los archivos cargados para que sea posible realizar el proceso de generar 
@@ -53,7 +53,7 @@ def schedule_generator(schedule_manager, s):
             else:
                 id_report += 1
                 comment = "No se encontró un grupo disponible de esta materia"
-                report = cl.Report(id_report, subject.id_subject, student.id_student, comment)
+                report = Report(id_report, subject.id_subject, student.id_student, comment)
                 schedule_manager.insert_report(report)
     
     return schedule_manager
