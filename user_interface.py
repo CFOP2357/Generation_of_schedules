@@ -24,8 +24,8 @@ class UI(object):
         
 		self.progreso = DoubleVar()
 		
-		self.pbr_tarea = Progressbar(self.root, length=250, style='black.Horizontal.TProgressbar', variable=self.progreso, maximum=100)#aqui se agrega la variable que le da el aumento a la barra en la seccion de variable
-		self.pbr_tarea['value'] = 0 #valor de inicio de barrra de progreso tambien se agrega el limite a la barra con maximum=#
+		self.pbr_tarea = Progressbar(self.root, length=250, style='black.Horizontal.TProgressbar', variable=self.progreso, maximum=100)
+		self.pbr_tarea['value'] = 0 
 		self.state = 0
 
 		self.estudiantes_filename = ''
@@ -71,6 +71,13 @@ class UI(object):
 		if path:
 			f_m.class_to_excel(self.schedules.students,path)
 			f_m.reports_list_to_excel(self.schedules.reports,path)
+			# f_m.groups_to_excel(self.schedules.groups,path)
+			# f_m.format_schedule_to_excel(self.schedules.get_student(1),path)
+			# f_m.format_schedule_to_excel(self.schedules.get_student(5),path)
+			# f_m.format_schedule_to_excel(self.schedules.get_student(100),path)
+			# f_m.format_schedule_to_excel(self.schedules.get_student(500),path)
+			# f_m.format_schedule_to_excel(self.schedules.get_student(800),path)
+			# f_m.format_schedule_to_excel(self.schedules.get_student(1000),path)
 			self.Label6['text'] = "El archivo se guardó correctamente"
 
 
@@ -120,13 +127,13 @@ class UI(object):
 		self.df_subjects = r[1]
 		if(self.Label4['text'] == "El archivo de las materias fue cargado correctamente"):
 			self.open_materias_button["state"] = "disabled"
-			self.state +=1
+			self.state += 1
 			if(self.state == 4):
 				self.button_gen_set()
 
 	def run_algorithm(self) -> None:
 		self.Label5['text'] = "generando horarios iniciales"
-		self.schedules = s_g.schedule_generator(f_m.instant_classes(self), self)
+		self.schedules = s_g.schedule_generator_3(f_m.instant_classes(self), self)
 		self.progreso.set(100)
 
 		self.Label5['text'] = "horario disponible"
@@ -143,7 +150,6 @@ class UI(object):
 	def build_ui(self) -> None:
 		self.headerLabel.grid(				padx=5,pady=4,ipadx=5,ipady=5, row=0, column=0, columnspan=3, sticky=S+N+E+W)
 		self.label_general.grid(			padx=5,pady=4,ipadx=5,ipady=5, row=1, column=0, sticky=W)
-		#self.label_Metrica.grid(			padx=5,pady=4,ipadx=5,ipady=5, row=2, column=0, sticky=W)
 		self.open_estudiantes_button.grid(	padx=5,pady=4,ipadx=5,ipady=5, row=3, column=0, sticky=E+W)
 		self.Label1.grid(                   padx=5,pady=4,ipadx=5,ipady=5, row=3, column=1, sticky=E+W)
 		self.open_grupos_button.grid(		padx=5,pady=4,ipadx=5,ipady=5, row=4, column=0, sticky=E+W)
@@ -152,7 +158,7 @@ class UI(object):
 		self.Label3.grid(                   padx=5,pady=4,ipadx=5,ipady=5, row=5, column=1, sticky=E+W)
 		self.open_materias_button.grid(		padx=5,pady=4,ipadx=5,ipady=5, row=6, column=0, sticky=E+W)
 		self.Label4.grid(                   padx=5,pady=4,ipadx=5,ipady=5, row=6, column=1, sticky=E+W)
-		self.pbr_tarea.grid(                padx=5,pady=4,ipadx=5,ipady=5, row=7, column=0, sticky=E+W)#posicionamiento de barra
+		self.pbr_tarea.grid(                padx=5,pady=4,ipadx=5,ipady=5, row=7, column=0, sticky=E+W)
 		self.Label5.grid(                   padx=5,pady=4,ipadx=5,ipady=5, row=7, column=1, sticky=E+W)
 		self.generate_schedules_button.grid(padx=5,pady=4,ipadx=5,ipady=5, row=7, column=2, sticky=E+W)
 		self.download_schedule_button.grid(padx=5,pady=4,ipadx=5,ipady=5, row=8, column=2, sticky=E+W)
