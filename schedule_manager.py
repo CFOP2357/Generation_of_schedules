@@ -40,11 +40,36 @@ class Group:
         else:
             return false
 
+    def get_number_of_days(self):
+        count = 0
+        if self.monday_start != 0:
+            count += 1
+        if self.tuesday_start != 0:
+            count += 1
+        if self.wednesday_start != 0:
+            count += 1
+        if self.thursday_start != 0:
+            count += 1
+        if self.friday_start != 0:
+            count += 1
+        if self.saturday_start != 0:
+            count += 1
+        return count
+
+
+
     def unsuscribe_student(self):
         self.available_spaces += 1
     
     def suscribe_student(self):
         self.available_spaces -= 1
+
+    def get_available_spaces(self):
+        return self.available_spaces
+
+    def get_string(self):
+        csv = str(self.id_subject) + "," + str(self.id_group) + "," + str(self.available_spaces) + "\n"
+        return csv
 
 
 
@@ -84,8 +109,12 @@ class Subject:
     def get_compatible_group_with_more_space(self,student):
         more_space_group = list(self.groups.values())[0]
         for group in self.groups.values():
-            if(group.available_spaces > more_space_group.available_spaces and not student.is_group_compatible(group)):
+            if(group.get_available_spaces() > more_space_group.get_available_spaces() \
+                and student.is_group_compatible(group) and group.available_spaces > 0 ):
                 more_space_group = group
+        
+        if more_space_group.get_available_spaces() < 1:
+            more_space_group = None
 
         return more_space_group
 
@@ -95,7 +124,8 @@ class Subject:
         earliest_group = None
         earliest_hour = 30
         for group in self.groups.values():
-            if group.available_spaces > 0 and self.get_group_earliest_hour(group) < earliest_hour and student.is_group_compatible(group):
+            if group.get_available_spaces() > 0 and self.get_group_earliest_hour(group) < \
+                earliest_hour and student.is_group_compatible(group):
                 earliest_hour = self.get_group_earliest_hour(group)
                 earliest_group = group
 
@@ -123,6 +153,12 @@ class Subject:
 
         return earliest_hour
         
+    def get_days_per_week(self):
+        count = 0
+        for group in self.groups.values():
+            if group.get_number_of_days() > count:
+                count = group.get_number_of_days()
+        return count
 
     #this funtion is used at the moment of binding data
     def insert_group(self, new_group):
@@ -215,10 +251,9 @@ class Student:
         self.fill_schedule(group, True)
 
 
-    def unsuscribe_subject_group(self, id_subject):
-        self.suscribed_groups[id_subject].unsuscribe_student()
-        self.suscribed_groups.pop(id_subject)
-        group.unsuscribe_student()
+    def unsuscribe_subject_group(self, group):
+        self.suscribed_groups[group.id_subject].unsuscribe_student()
+        self.suscribed_groups.pop(group.id_subject)
         self.fill_schedule(group, False)
 
 
@@ -249,6 +284,8 @@ class Student:
 
     def insert_major(self, major):
         self.major = major
+    
+
 
 
 class Report:
@@ -258,12 +295,12 @@ class Report:
         self.id_student = id_student
         self.comment = comment
         date = datetime.now()
-        self.date = str(date.strftime("%m-%d-%Y"))
+        self.date = str(date.strftime("%d/%m/%Y"))
         self.time = str(date.strftime("%H:%M:%S"))
 
     def get_string(self):
         report_text = str(self.id_report) + ',' + str(self.id_subject) + ',' + str(self.id_student)\
-            + str(self.date) + ',' + str(self.time) + ',' + str(self.comment) 
+            + ',' + self.date + ',' + self.time + ',' + str(self.comment) 
         return report_text
 
 
@@ -311,6 +348,14 @@ class ScheduleManager:
             student.major = self.majors[student.id_major]
 
         #def get_students_ids(self):
+
+    def get_student(self,id_student):
+        res = None
+        for student in self.students:
+            if student.id_student == id_student:
+                res = student
+                break
+        return res
     
     def get_students(self):
         return self.students

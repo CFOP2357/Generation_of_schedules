@@ -16,7 +16,11 @@ def read_error_filter(path, name):
     elif(name == 'grupos'):
         alert_id = 3 \
             if shape[1]==16 and df.columns.values[0] == 'id_materia' and df.columns.values[1] == 'grupo' \
-                and df.columns.values[2] == 'maestro' and df.columns.values[3] == 'cupo' else 4# falta validar todas las columnas
+                and df.columns.values[2] == 'maestro' and df.columns.values[3] == 'cupo' and df.columns.values[4] == 'lunes_inicio'\
+                    and df.columns.values[5] == 'lunes_final' and df.columns.values[6] == 'martes_inicio' and df.columns.values[7] == 'martes_final'\
+                        and df.columns.values[8] == 'miercoles_inicio' and df.columns.values[9] == 'miercoles_final' and df.columns.values[10] == 'jueves_inicio'\
+                            and df.columns.values[11] == 'jueves_final' and df.columns.values[12] == 'viernes_inicio' and df.columns.values[13] == 'viernes_final'\
+                                and df.columns.values[14] == 'sabado_inicio' and df.columns.values[15] == 'sabado_final' else 4
     elif(name == 'carreras'):
         alert_id = 5 \
             if shape[1]==2 and df.columns.values[0] == 'id_carrera' and df.columns.values[1] == 'nombre' else 6
@@ -111,9 +115,38 @@ def reports_list_to_excel(reports, path):
     date = datetime.now()
     file = path + "/ReportesHorarios-" + str(date.strftime("%m-%d-%Y-%H-%M-%S")) +  ".csv"
     csv = open(file,"w")
-    csv.write("id_reporte,id_materia,id_usuario,fecha,hora,comentario\n")
+    csv.write("id_reporte,id_materia,id_estudiante,fecha,hora,comentario\n")
     for report in reports:
         csv.write(report.get_string() + "\n")
+
+def format_schedule_to_excel(student, path):
+    date = datetime.now()
+    file = path + "/Horario "+str(student.id_student)+" -" + str(date.strftime("%m-%d-%Y-%H-%M-%S")) +  ".csv"
+    csv = open(file,"w")
+    csv.write("Hora,lunes,martes,miercoles,jueves,viernes,sabado\n")
+
+    for i in range(14):
+        map_schedule = str(i+7)+" a "+ str(i+8) + ","
+        for j in range(6):
+            map_schedule += str(student.schedule[i,j]) + ","
+        if map_schedule != "":
+            map_schedule = map_schedule[:-1]
+            map_schedule += "\n"
+            csv.write(map_schedule)
+        
+def groups_to_excel(groups, path):
+    date = datetime.now()
+    file = path + "/Grupos-" + str(date.strftime("%m-%d-%Y-%H-%M-%S")) +  ".csv"
+    csv = open(file,"w")
+    csv.write("id_materia,grupo,cupo\n")
+    for group in groups:
+        csv.write(group.get_string())
+
+
+
+
+   
+
 
 
 
