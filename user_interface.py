@@ -71,13 +71,13 @@ class UI(object):
 		if path:
 			f_m.class_to_excel(self.schedules.students,path)
 			f_m.reports_list_to_excel(self.schedules.reports,path)
-			# f_m.groups_to_excel(self.schedules.groups,path)
-			# f_m.format_schedule_to_excel(self.schedules.get_student(1),path)
-			# f_m.format_schedule_to_excel(self.schedules.get_student(5),path)
-			# f_m.format_schedule_to_excel(self.schedules.get_student(100),path)
-			# f_m.format_schedule_to_excel(self.schedules.get_student(500),path)
-			# f_m.format_schedule_to_excel(self.schedules.get_student(800),path)
-			# f_m.format_schedule_to_excel(self.schedules.get_student(1000),path)
+			f_m.groups_to_excel(self.schedules.groups,path)
+			f_m.format_schedule_to_excel(self.schedules.get_student(1),path)
+			f_m.format_schedule_to_excel(self.schedules.get_student(5),path)
+			f_m.format_schedule_to_excel(self.schedules.get_student(100),path)
+			f_m.format_schedule_to_excel(self.schedules.get_student(500),path)
+			f_m.format_schedule_to_excel(self.schedules.get_student(800),path)
+			f_m.format_schedule_to_excel(self.schedules.get_student(1000),path)
 			self.Label6['text'] = "El archivo se guardó correctamente"
 
 
@@ -133,7 +133,7 @@ class UI(object):
 
 	def run_algorithm(self) -> None:
 		self.Label5['text'] = "generando horarios iniciales"
-		self.schedules = s_g.schedule_generator_3(f_m.instant_classes(self), self)
+		self.schedules = s_g.schedule_generator_prioritize_compact(f_m.instant_classes(self), self)
 		self.progreso.set(100)
 
 		self.Label5['text'] = "horario disponible"

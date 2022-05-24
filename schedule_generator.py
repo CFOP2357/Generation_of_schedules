@@ -34,7 +34,7 @@ from schedule_manager import *
 # 7mo metodo.- suscribe_subject_group(group): recibe como parametro un objeto tipo Group , procesa las horas
 # y las inscribe en el horario del alumno, se usa como mapa de horas inscritas una matriz de unos y ceros
 
-def schedule_generator(schedule_manager, s):
+def schedule_generator_prioritize_compact(schedule_manager, s):
     schedule_manager.bind_data()
     total = schedule_manager.get_students_count()
     count = 0
@@ -58,7 +58,7 @@ def schedule_generator(schedule_manager, s):
     
     return schedule_manager
 
-def schedule_generator_2(schedule_manager, s):
+def schedule_generator_prioritize_equitable(schedule_manager, s):
     schedule_manager.bind_data()
     total = schedule_manager.get_students_count()
     count = 0
@@ -82,24 +82,39 @@ def schedule_generator_2(schedule_manager, s):
     
     return schedule_manager
         
-def schedule_generator_3(schedule_manager, s):
+def schedule_generator_improved(schedule_manager, s):
     schedule_manager.bind_data()
     total = schedule_manager.get_students_count()
-    count = 0
+    count = 0 # contador para llevar avanzar el progress bar
     id_report = 0
     for student in schedule_manager.students:
+
+        # logica de Progress bar no importante para el algoritmo
         progress = 95 * count / total
         s.progreso.set(progress)
         count += 1
         s.root.update_idletasks()
-        count = 0
-        while count != 2:
-            for subject in student.major.subjects.values():
-                if subject.get_days_per_week() > 2:
-                    if count == 0:
+        # ------------------------------------------------------ #
+         
+        count2 = 0 # contador auxiliar para mejora de algoritmo
+        while count2 != 2: # while para pasar dos veces sobre las materias del alumno 
+            # una es para inscribir todas las materias con mayor a 2 dias a la semana
+            # la segunda pasada es para inscribir las materias con menos a 3 dias a la semana 
+            # (laboratorios y seminarios) regularmente. 
+
+            for subject in student.major.subjects.values(): # por cada alumno hacer
+                if subject.get_days_per_week() > 2: # si la materia se da mas de dos veces al dia 
+                    if count2 == 0: # si es la primera pasada 
+
+                        ## Obtener grupos con prioridad de horario compacto, si no encuentra se va a obtener el 
+                        ## grupo con mas espacios (prioridad equitativa en segunda opcion)
                         group = subject.get_earliest_compatible_group(student)
                         group = subject.get_compatible_group_with_more_space(student)\
                             if group is None else group
+                        ## ---------------------------------------------------------------- ##
+
+                        ## Si encuentra un grupo entonces lo inscribe, si no levanta un reporte de error en la materia
+                        ## e indicando el alumno con el cual ocurrio la incidencia
                         if group:
                             student.suscribe_subject_group(group)
                         else:
@@ -107,7 +122,11 @@ def schedule_generator_3(schedule_manager, s):
                             comment = "No se encontró un grupo disponible de esta materia"
                             report = Report(id_report, subject.id_subject, student.id_student, comment)
                             schedule_manager.insert_report(report)
-                elif count == 1:
+                        ## ------------------------------------------------------------------- ##
+
+                elif count2 == 1: ## si no significa que el grupo es menor a 2 materias y solo pasa si es la segunda pasada (count2 == 1)
+                    
+                    ## misma logica de obtencion de grupo e inscripcion de materia
                     group = subject.get_earliest_compatible_group(student)
                     group = subject.get_compatible_group_with_more_space(student)\
                         if group is None else group
@@ -118,11 +137,10 @@ def schedule_generator_3(schedule_manager, s):
                         comment = "No se encontró un grupo disponible de esta materia"
                         report = Report(id_report, subject.id_subject, student.id_student, comment)
                         schedule_manager.insert_report(report)
-            count += 1
-
+                    ## ------------------------------------------------------------- ##
+            count2 += 1 ## avanza contador (cuando llegue a 2 osea la tercera pasada el while se rompe)
 
             
-    
     return schedule_manager
 
 
