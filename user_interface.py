@@ -133,7 +133,7 @@ class UI(object):
 
 	def run_algorithm(self) -> None:
 		self.Label5['text'] = "generando horarios iniciales"
-		self.schedules = s_g.schedule_generator_prioritize_compact(f_m.instant_classes(self), self)
+		self.schedules = s_g.schedule_generator_improved(f_m.instant_classes(self), self)
 		self.progreso.set(100)
 
 		self.Label5['text'] = "horario disponible"

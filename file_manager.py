@@ -2,6 +2,8 @@ from sched import scheduler
 import pandas as pd
 from datetime import datetime
 
+from sqlalchemy import values
+
 from schedule_manager import *
 
 def read_error_filter(path, name):
@@ -133,6 +135,10 @@ def format_schedule_to_excel(student, path):
             map_schedule = map_schedule[:-1]
             map_schedule += "\n"
             csv.write(map_schedule)
+    
+    csv.write("\nMaterias inscritas\n")
+    for subject in student.get_major_subjects().values():
+        csv.write(str(subject.name)+","+str(subject.id_subject)+"\n")
         
 def groups_to_excel(groups, path):
     date = datetime.now()
