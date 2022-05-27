@@ -1,4 +1,5 @@
 from tkinter import * 
+import os
 from tkinter.ttk import Progressbar
 from tkinter import filedialog
 from PIL import ImageTk,Image
@@ -28,14 +29,18 @@ class UI(object):
 		self.pbr_tarea['value'] = 0 
 		self.state = 0
 
+		file_path = os.path.dirname(os.path.abspath(__file__))
+		image_path = os.path.join(file_path, 'images', 'icono.ico')
+
 		self.estudiantes_filename = ''
 		self.grupos_filename = ''
 		self.carreras_filename=''
 		self.materias_filename=''
 		self.root.resizable(False,False)
-		self.root.iconbitmap('icono.ico')
+		self.root.iconbitmap(image_path)
 		self.root.config(bg="#E9E9F1")
-		self.headerImg = ImageTk.PhotoImage(Image.open('UASLP.PNG'))
+		image_path = os.path.join(file_path, 'images', 'UASLP.PNG')
+		self.headerImg = ImageTk.PhotoImage(Image.open(image_path))
 		self.headerLabel = Label(self.root, image=self.headerImg)
 
 		self.Label1 = Label(self.root, text="No cargado", bg="#E9E9F1")
@@ -71,13 +76,13 @@ class UI(object):
 		if path:
 			f_m.class_to_excel(self.schedules.students,path)
 			f_m.reports_list_to_excel(self.schedules.reports,path)
-			f_m.groups_to_excel(self.schedules.groups,path)
-			f_m.format_schedule_to_excel(self.schedules.get_student(1),path)
-			f_m.format_schedule_to_excel(self.schedules.get_student(5),path)
-			f_m.format_schedule_to_excel(self.schedules.get_student(100),path)
-			f_m.format_schedule_to_excel(self.schedules.get_student(500),path)
-			f_m.format_schedule_to_excel(self.schedules.get_student(800),path)
-			f_m.format_schedule_to_excel(self.schedules.get_student(1000),path)
+			# f_m.groups_to_excel(self.schedules.groups,path)
+			# f_m.format_schedule_to_excel(self.schedules.get_student(1),path)
+			# f_m.format_schedule_to_excel(self.schedules.get_student(5),path)
+			# f_m.format_schedule_to_excel(self.schedules.get_student(100),path)
+			# f_m.format_schedule_to_excel(self.schedules.get_student(500),path)
+			# f_m.format_schedule_to_excel(self.schedules.get_student(800),path)
+			# f_m.format_schedule_to_excel(self.schedules.get_student(1000),path)
 			self.Label6['text'] = "El archivo se guardó correctamente"
 
 
